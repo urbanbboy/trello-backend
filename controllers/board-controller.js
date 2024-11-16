@@ -41,6 +41,17 @@ class BoardController {
             next(error)
         }
     }
+
+    async updateBoard(req, res, next) {
+        try {
+            const { name } = req.body
+            const { boardId } = req.params
+            const updatedBoard = await BoardService.updateBoard(boardId, name)
+            return res.json(updatedBoard)
+        } catch (error) {
+            next(error)
+        }
+    }
 }
 
 export default new BoardController();

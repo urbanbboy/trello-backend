@@ -49,6 +49,20 @@ class BoardService {
             throw new ApiError.BadRequest("Доска не найдена")
         }
     }
+
+    async updateBoard(boardId, name) {
+        if(!boardId) {
+            throw ApiError.BadRequest("Доска не найдена")
+        }
+        
+        const updatedBoard = await BoardModel.findByIdAndUpdate(
+            boardId,
+            { name },
+            { new: true }
+        )
+
+        return updatedBoard
+    }
 }
 
 export default new BoardService()

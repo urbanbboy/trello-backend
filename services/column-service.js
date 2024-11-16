@@ -9,7 +9,6 @@ class ColumnService {
         }
 
         const boardLists = await ColumnModel.find({ board: boardId })
-        console.log(boardLists)
         return boardLists
     }
 
@@ -25,13 +24,32 @@ class ColumnService {
             position
         })
 
-        console.log(newList)
-
         await BoardModel.findByIdAndUpdate(board, {
-            $push: { lists: newList._id }
+            $push: { columns: newList._id }
         })
         
         return newList
+    }
+
+    async deleteColumn(columnId) {
+        const deletedColumn = await ColumnModel.findByIdAndDelete(columnId)
+        if(!deletedColumn) {
+            throw ApiError.BadRequest("Колонка не найдена")
+        }
+    }
+
+    async updateColumn(columnId, title, board, tasks = [], position) {
+        if(!columnId) {
+            throw ApiError.BadRequest("Колонка не найдена")
+        }
+
+        const updatedColumn = await ColumnModel.findByIdAndUpdate(
+            columnId,
+            { title, board, tasks, position },
+            {new: true}
+        )
+
+        return updatedColumn
     }
 }
 

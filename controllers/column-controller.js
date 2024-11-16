@@ -22,17 +22,22 @@ class ColumnController {
         }
     }
 
-    async deleteColumn() {
+    async deleteColumn(req, res, next) {
         try {
-
+            const { columnId } = req.params
+            await ColumnService.deleteColumn(columnId)
+            return res.json({ message: "Колонка удалена" })
         } catch (error) {
             next(error)
         }
     }
 
-    async changePosition() {
+    async updateColumn(req, res, next) {
         try {
-
+            const { title, board, tasks, position } = req.body
+            const { columnId } = req.params
+            const editedColumn = await ColumnService.updateColumn(columnId, title, board, tasks, position)
+            return res.json(editedColumn)
         } catch (error) {
             next(error)
         }

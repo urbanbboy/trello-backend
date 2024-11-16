@@ -23,13 +23,17 @@ router.post('/refresh', UserController.refresh);
 router.post('/boards', authMiddleware, BoardController.createBoard)
 router.get('/boards', authMiddleware, BoardController.getBoards)
 router.get('/board', authMiddleware, BoardController.getBoardById)
+router.put('/boards/:boardId', authMiddleware, BoardController.updateBoard)
 router.delete('/boards/:boardId', authMiddleware, BoardController.deleteBoard)
 
 //column
 router.post('/columns', authMiddleware, ColumnController.createColumn)
 router.get('/columns', authMiddleware, ColumnController.getBoardColumns)
+router.put('/columns/:columnId', authMiddleware, ColumnController.updateColumn)
 router.delete('/columns/:columnId', authMiddleware, ColumnController.deleteColumn)
 
 //task
-router.post('/task', TaskController.create)
-router.get('/task/:id', TaskController.get)
+router.post('/tasks', TaskController.createTask)
+router.delete('/tasks/:taskId', TaskController.deleteTask)
+router.get('/tasks', TaskController.getColumnTasks)
+router.put('/tasks/:id', TaskController.updateTask)
