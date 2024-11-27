@@ -52,6 +52,10 @@ class BoardController {
             next(error)
         }
     }
+
+    async updateBoard() {
+        
+    }
 }
 
 export default new BoardController();

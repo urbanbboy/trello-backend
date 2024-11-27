@@ -3,7 +3,7 @@ import ColumnService from '../services/column-service.js'
 class ColumnController {
     async getBoardColumns(req, res, next) {
         try {
-            const { boardId } = req.query
+            const { boardId } = req.params
             const boardColumns = await ColumnService.getBoardColumns(boardId)
             return res.json(boardColumns)
 
@@ -14,8 +14,8 @@ class ColumnController {
 
     async createColumn(req, res, next) {
         try {
-            const { title, board, tasks, position } = req.body
-            const newList = await ColumnService.createColumn(title, board, tasks, position)
+            const { title, boardId, tasks, order } = req.body
+            const newList = await ColumnService.createColumn(title, boardId, tasks, order)
             return res.json(newList)
         } catch (error) {
             next(error)
@@ -34,9 +34,9 @@ class ColumnController {
 
     async updateColumn(req, res, next) {
         try {
-            const { title, board, tasks, position } = req.body
+            const { title, boardId, tasks, order } = req.body
             const { columnId } = req.params
-            const editedColumn = await ColumnService.updateColumn(columnId, title, board, tasks, position)
+            const editedColumn = await ColumnService.updateColumn(columnId, title, boardId, tasks, order)
             return res.json(editedColumn)
         } catch (error) {
             next(error)

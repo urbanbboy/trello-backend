@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 
-
 const TaskSchema = mongoose.Schema(
     {
         title: {
@@ -10,11 +9,15 @@ const TaskSchema = mongoose.Schema(
         description: {
             type: String,
         },
-        column: {
+        columnId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "ColumnModel"
         },
-        position: {
+        boardId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "BoardModel"
+        },
+        order: {
             type: Number,
             required: true
         },

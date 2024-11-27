@@ -6,10 +6,10 @@ const BoardSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        columns: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "ColumnModel"
-        }],
+        // columns: [{
+        //     type: mongoose.Schema.Types.ObjectId,
+        //     ref: "ColumnModel"
+        // }],
         owner: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "UserModel",

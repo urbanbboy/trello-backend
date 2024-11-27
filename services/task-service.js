@@ -3,13 +3,20 @@ import ColumnModel from '../models/column-model.js'
 import TaskModel from '../models/task-model.js'
 
 class TaskService {
-    async createTask(title, description, column, position, assignees) {
-        if(!title && !description && !column) {
+    async createTask(title, description, columnId, boardId, order, assignees = []) {
+        if (!title && !description && !columnId && !boardId) {
             throw ApiError("Поля title и desecription обязательны")
         }
-        const newTask = await TaskModel.create({ title, description, column, position, assignees: assignees || [] })
+        const newTask = await TaskModel.create({
+            title,
+            description,
+            columnId,
+            boardId,
+            order,
+            assignees
+        })
 
-        await ColumnModel.findByIdAndUpdate(column, {
+        await ColumnModel.findByIdAndUpdate(columnId, {
             $push: { tasks: newTask._id }
         })
 
@@ -18,22 +25,22 @@ class TaskService {
 
     async deleteTask(taskId) {
         const deletedTask = await TaskModel.findByIdAndDelete(taskId)
-        if(!deletedTask) {
+        if (!deletedTask) {
             throw ApiError.BadRequest("Задача не найдена")
         }
     }
 
-    async getColumnTasks(columnId) {
-        if(!columnId) {
+    async getBoardTasks(boardId) {
+        if (!boardId) {
             throw ApiError.BadRequest("Колонка не найдена")
         }
 
-        const columnTasks = await TaskModel.find({ column: columnId })
+        const columnTasks = await TaskModel.find({ boardId })
         return columnTasks
     }
 
     async updateTask() {
-        
+
     }
 }
 

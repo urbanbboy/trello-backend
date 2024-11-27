@@ -1,5 +1,6 @@
 import ApiError from '../exceptions/api-error.js'
 import BoardModel from '../models/board-model.js'
+import ColumnModel from '../models/column-model.js'
 
 
 class BoardService {
@@ -35,7 +36,6 @@ class BoardService {
         }
 
         const board = await BoardModel.findOne({ _id: boardId });
-        console.log(board)
         if(!board) {
             throw ApiError.BadRequest("Некорректный id доски")
         }
@@ -45,14 +45,21 @@ class BoardService {
 
     async deleteBoard(boardId) {
         const deletedBoard = await BoardModel.findByIdAndDelete(boardId)
+        
         if(!deletedBoard) {
             throw new ApiError.BadRequest("Доска не найдена")
         }
+
+        await ColumnModel.deleteMany({ boardId })
     }
 
     async updateBoard(boardId, name) {
         if(!boardId) {
             throw ApiError.BadRequest("Доска не найдена")
+        }
+
+        if (!name || name.trim() === "") {
+            throw ApiError.BadRequest("Название доски не может быть пустым");
         }
         
         const updatedBoard = await BoardModel.findByIdAndUpdate(
@@ -60,6 +67,10 @@ class BoardService {
             { name },
             { new: true }
         )
+
+        if (!updatedBoard) {
+            throw ApiError.BadRequest("Доска с таким ID не найдена");
+        }
 
         return updatedBoard
     }

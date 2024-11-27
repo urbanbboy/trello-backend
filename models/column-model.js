@@ -6,7 +6,7 @@ const ColumnSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    board: {
+    boardId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'BoardModel'
     },
@@ -14,10 +14,12 @@ const ColumnSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'TaskModel'
     }],
-    position: {
+    order: {
         type: Number,
         required: true
     }
-})
+},
+    { timestamps: true }
+)
 
 export default mongoose.model("ColumnModel", ColumnSchema)

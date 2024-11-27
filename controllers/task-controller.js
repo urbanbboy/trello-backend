@@ -9,8 +9,8 @@ class TaskController {
             if (!errors.isEmpty()) {
                 return next(ApiError.BadRequest("Ошибка при валидации", errors.array()))
             }
-            const { title, description, column, position, assignees } = req.body
-            const newTask = await TaskService.createTask(title, description, column, position, assignees)
+            const { title, description, columnId, boardId, order, assignees } = req.body
+            const newTask = await TaskService.createTask(title, description, columnId, boardId, order, assignees)
             return res.json(newTask)
         } catch (error) {
             next(error)
@@ -27,10 +27,10 @@ class TaskController {
         }
     }
 
-    async getColumnTasks(req, res, next) {
+    async getBoardTasks(req, res, next) {
         try {
-            const { columnId } = req.query
-            const taskList = await TaskService.getColumnTasks(columnId)
+            const { boardId } = req.params
+            const taskList = await TaskService.getBoardTasks(boardId)
             return res.json(taskList)
         } catch (error) {
             next(error)

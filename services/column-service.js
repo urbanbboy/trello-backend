@@ -1,6 +1,6 @@
 import ApiError from '../exceptions/api-error.js'
-import BoardModel from '../models/board-model.js'
 import ColumnModel from '../models/column-model.js'
+import TaskModel from '../models/task-model.js'
 
 class ColumnService {
     async getBoardColumns(boardId) {
@@ -8,26 +8,22 @@ class ColumnService {
             throw ApiError.BadRequest("Отсутствует ID доски")
         }
 
-        const boardLists = await ColumnModel.find({ board: boardId })
+        const boardLists = await ColumnModel.find({ boardId })
         return boardLists
     }
 
-    async createColumn(title, board, tasks = [], position) {
-        if(!title && !board) {
+    async createColumn(title, boardId, tasks = [], order) {
+        if(!title && !boardId) {
             throw ApiError.BadRequest("Отсутствуют необходимые данные для создания колонки")
         }
 
         const newList = await ColumnModel.create({
             title,
-            board,
+            boardId,
             tasks,
-            position
+            order
         })
 
-        await BoardModel.findByIdAndUpdate(board, {
-            $push: { columns: newList._id }
-        })
-        
         return newList
     }
 
@@ -36,16 +32,18 @@ class ColumnService {
         if(!deletedColumn) {
             throw ApiError.BadRequest("Колонка не найдена")
         }
+
+        await TaskModel.deleteMany({ columnId })
     }
 
-    async updateColumn(columnId, title, board, tasks = [], position) {
+    async updateColumn(columnId, title, boardId, tasks = [], order) {
         if(!columnId) {
             throw ApiError.BadRequest("Колонка не найдена")
         }
 
         const updatedColumn = await ColumnModel.findByIdAndUpdate(
             columnId,
-            { title, board, tasks, position },
+            { title, boardId, tasks, order },
             {new: true}
         )
 
