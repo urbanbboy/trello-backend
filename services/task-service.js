@@ -35,12 +35,43 @@ class TaskService {
             throw ApiError.BadRequest("Колонка не найдена")
         }
 
-        const columnTasks = await TaskModel.find({ boardId })
+        const columnTasks = await TaskModel.find({ boardId }).sort({ order: 1 })
         return columnTasks
     }
 
-    async updateTask() {
+    async updateTask(id, title, description) {
+        if(!id) {
+            throw ApiError.BadRequest("Произошла ошибка. Повторите попытку");
+        }
 
+        const updatedTask = await TaskModel.findByIdAndUpdate(
+            id,
+            { title, description },
+            { new: true }
+        )
+
+        return updatedTask
+    }   
+
+    async updateTaskOrder(tasks, boardId) {
+        if(!boardId || !tasks) {
+            throw ApiError.BadRequest("Отсутствуют необходимые данные для обновления порядка колонок");
+        }
+
+        const updatedTasks = Promise.all(
+            tasks.map(async (task, index) => {
+                return await TaskModel.findByIdAndUpdate(
+                    task._id,
+                    {
+                        order: index, 
+                        columnId: task.columnId,
+                    },
+                    { new: true }
+                )
+            })
+        )
+
+        return updatedTasks
     }
 }
 

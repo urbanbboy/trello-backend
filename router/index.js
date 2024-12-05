@@ -29,6 +29,7 @@ router.delete('/boards/:boardId', authMiddleware, BoardController.deleteBoard)
 //column
 router.get('/boards/:boardId/columns', authMiddleware, ColumnController.getBoardColumns)
 router.post('/columns', authMiddleware, ColumnController.createColumn)
+router.put('/columns/updateorder', authMiddleware, ColumnController.updateColumnOrder)
 router.put('/columns/:columnId', authMiddleware, ColumnController.updateColumn)
 router.delete('/columns/:columnId', authMiddleware, ColumnController.deleteColumn)
 
@@ -36,4 +37,5 @@ router.delete('/columns/:columnId', authMiddleware, ColumnController.deleteColum
 router.get('/boards/:boardId/tasks', authMiddleware, TaskController.getBoardTasks)
 router.post('/tasks', authMiddleware, TaskController.createTask)
 router.delete('/tasks/:taskId', authMiddleware, TaskController.deleteTask)
+router.put('/tasks/updateorder', authMiddleware, TaskController.updateTaskOrder)
 router.put('/tasks/:id', authMiddleware, TaskController.updateTask)

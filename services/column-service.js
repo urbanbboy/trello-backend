@@ -4,16 +4,16 @@ import TaskModel from '../models/task-model.js'
 
 class ColumnService {
     async getBoardColumns(boardId) {
-        if(!boardId) {
+        if (!boardId) {
             throw ApiError.BadRequest("Отсутствует ID доски")
         }
 
-        const boardLists = await ColumnModel.find({ boardId })
+        const boardLists = await ColumnModel.find({ boardId }).sort({ order: 1 })
         return boardLists
     }
 
     async createColumn(title, boardId, tasks = [], order) {
-        if(!title && !boardId) {
+        if (!title && !boardId) {
             throw ApiError.BadRequest("Отсутствуют необходимые данные для создания колонки")
         }
 
@@ -29,7 +29,7 @@ class ColumnService {
 
     async deleteColumn(columnId) {
         const deletedColumn = await ColumnModel.findByIdAndDelete(columnId)
-        if(!deletedColumn) {
+        if (!deletedColumn) {
             throw ApiError.BadRequest("Колонка не найдена")
         }
 
@@ -37,17 +37,34 @@ class ColumnService {
     }
 
     async updateColumn(columnId, title, boardId, tasks = [], order) {
-        if(!columnId) {
+        if (!columnId) {
             throw ApiError.BadRequest("Колонка не найдена")
         }
 
         const updatedColumn = await ColumnModel.findByIdAndUpdate(
             columnId,
             { title, boardId, tasks, order },
-            {new: true}
+            { new: true }
         )
 
         return updatedColumn
+    }
+
+    async updateColumnOrder(boardId, columns) {
+        if (!boardId || !columns) {
+            throw ApiError.BadRequest("Отсутствуют необходимые данные для обновления порядка колонок");
+        }
+
+        const updatedColumns = await Promise.all(
+            columns.map(async (column, index) => {
+                return await ColumnModel.findByIdAndUpdate(
+                    column._id,
+                    { order: index },
+                    { new: true });
+            })
+        );
+
+        return updatedColumns;
     }
 }
 

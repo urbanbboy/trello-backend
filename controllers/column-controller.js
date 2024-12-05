@@ -42,6 +42,17 @@ class ColumnController {
             next(error)
         }
     }
+
+    async updateColumnOrder(req, res, next) {
+        try {
+            const { columns, boardId } = req.body;
+            console.log(boardId)
+            const updatedColumns = await ColumnService.updateColumnOrder(boardId, columns);
+            return res.json(updatedColumns);
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 export default new ColumnController();

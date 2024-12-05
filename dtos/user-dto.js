@@ -12,4 +12,5 @@ export default class UserDto {
         this.username = model.username;
         this.boards = model.boards;
     }
+
 }
