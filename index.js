@@ -13,7 +13,7 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
     credentials: true,
-    origin: process.env.CLIENT_URL
+    origin: [process.env.CLIENT_URL, process.env.VERCEL_CLIENT_URL, process.env.CLIENT_BUILD_URL]
 }))
 app.use('/api', router)
 app.use(errorMiddleware)
