@@ -79,8 +79,8 @@ class UserService {
         const user = await UserModel.findById(userData.id)
         const userDto = new UserDto(user)
         const tokens = TokenService.generateTokens({...userDto})
-        const { refreshToken, ...accessToken } = tokens
-        await TokenService.saveToken(userDto.id, refreshToken)
+        const { newRefreshToken, ...accessToken } = tokens
+        await TokenService.saveToken(userDto.id, newRefreshToken)
     
         return {...accessToken, user: userDto}
     }
