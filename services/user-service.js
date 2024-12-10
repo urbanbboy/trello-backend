@@ -21,10 +21,11 @@ class UserService {
         // await MailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activationLink}`)
         const userDto = new UserDto(user);
         const tokens = TokenService.generateTokens({...userDto});
-        await TokenService.saveToken(userDto.id, tokens.refreshToken)
+        const { refreshToken, ...accessToken } = tokens
+        await TokenService.saveToken(userDto.id, refreshToken)
 
         return {
-            ...tokens,
+            ...accessToken,
             user: userDto
         }
     }
@@ -52,9 +53,10 @@ class UserService {
 
         const userDto = new UserDto(user)
         const tokens = TokenService.generateTokens({...userDto})
-        await TokenService.saveToken(userDto.id, tokens.refreshToken)
+        const { refreshToken, ...accessToken } = tokens
+        await TokenService.saveToken(userDto.id, refreshToken)
 
-        return {...tokens, user: userDto}
+        return {...accessToken, user: userDto}
     }
 
     async logout(refreshToken) {
@@ -77,9 +79,10 @@ class UserService {
         const user = await UserModel.findById(userData.id)
         const userDto = new UserDto(user)
         const tokens = TokenService.generateTokens({...userDto})
-        await TokenService.saveToken(userDto.id, tokens.refreshToken)
+        const { refreshToken, ...accessToken } = tokens
+        await TokenService.saveToken(userDto.id, refreshToken)
     
-        return {...tokens, user: userDto}
+        return {...accessToken, user: userDto}
     }
 }
 
