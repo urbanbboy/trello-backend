@@ -17,6 +17,7 @@ app.use(cors({
 }))
 app.use('/api', router)
 app.use(errorMiddleware)
+app.use(express.static(path.join(__dirname, 'public')));
 
 const PORT = process.env.PORT || 8080
 
