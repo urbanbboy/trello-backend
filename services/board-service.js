@@ -4,12 +4,37 @@ import ColumnModel from '../models/column-model.js'
 
 
 class BoardService {
-    async createBoard(name, owner, members) {
+    async createBoard(name, owner, members, image) {
         if (!name && !owner) {
-            throw ApiError.BadRequest("Название и создатель доски требуется заполнить")
+            throw ApiError.BadRequest("Название доски не может быть пустым")
         }
 
-        const newBoard = await BoardModel.create({ name, owner, members: members || [] })
+        if(!image) {
+            throw ApiError.BadRequest("Отсутствует изображение. Не удалось создать доску")
+        }
+
+        const [
+            imageId,
+            imageThumbUrl,
+            imageFullUrl,
+            imageLinkHTML,
+            imageUserName
+        ] = image.split("|")
+
+        if(!imageId || !imageThumbUrl || !imageFullUrl || !imageLinkHTML || !imageUserName) {
+            throw ApiError.BadRequest("Отсутствует изображение. Не удалось создать доску")
+        }
+
+        const newBoard = await BoardModel.create({ 
+            name, 
+            owner, 
+            members: members || [],
+            imageId,
+            imageThumbUrl,
+            imageFullUrl,
+            imageLinkHTML,
+            imageUserName
+        })
         return newBoard
     }
 

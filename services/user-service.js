@@ -84,6 +84,25 @@ class UserService {
     
         return {...accessToken, user: userDto}
     }
+
+    async updateUser(id, username, email, image) {
+        console.log(id)
+        const user = await UserModel.findById(id)
+        console.log(user)
+        if(!user) {
+            throw ApiError.BadRequest("Пользователь не найден")
+        }
+
+        const updatedUser = await UserModel.findByIdAndUpdate(
+            id,
+            {
+                username, email, image
+            },
+            { new: true }
+        )
+
+        return updatedUser;
+    }
 }
 
 export default new UserService()

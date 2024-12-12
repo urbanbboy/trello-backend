@@ -6,10 +6,6 @@ const BoardSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        // columns: [{
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     ref: "ColumnModel"
-        // }],
         owner: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "UserModel",
@@ -18,7 +14,22 @@ const BoardSchema = new mongoose.Schema(
         members: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'UserModel',
-        }]
+        }],
+        imageId: {
+            type: String,
+        },
+        imageThumbUrl: {
+            type: String
+        },
+        imageFullUrl: {
+            type: String
+        },
+        imageUserName: {
+            type: String
+        },
+        imageLinkHTML: {
+            type: String,
+        }
     },
     { timestamps: true },
 )

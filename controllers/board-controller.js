@@ -4,8 +4,8 @@ import BoardService from '../services/board-service.js';
 class BoardController {
     async createBoard(req, res, next) {
         try {
-            const { name, owner, members } = req.body
-            const boardData = await BoardService.createBoard(name, owner, members)
+            const { name, owner, members, image } = req.body
+            const boardData = await BoardService.createBoard(name, owner, members, image)
             return res.json(boardData)
         } catch (error) {
             next(error)
@@ -44,17 +44,13 @@ class BoardController {
 
     async updateBoard(req, res, next) {
         try {
-            const { name } = req.body
-            const { boardId } = req.params
+            const { name, boardId } = req.body
+            console.log(name, boardId)
             const updatedBoard = await BoardService.updateBoard(boardId, name)
             return res.json(updatedBoard)
         } catch (error) {
             next(error)
         }
-    }
-
-    async updateBoard() {
-        
     }
 }
 

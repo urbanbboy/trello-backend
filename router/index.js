@@ -18,12 +18,13 @@ router.post('/register', UserController.register);
 router.post('/logout', UserController.logout);
 router.get('/activate/:link', UserController.activate);
 router.post('/refresh', UserController.refresh);
+router.put("/user", authMiddleware, UserController.updateUser)
 
 //board
 router.post('/boards', authMiddleware, BoardController.createBoard)
 router.get('/boards', authMiddleware, BoardController.getBoards)
 router.get('/board', authMiddleware, BoardController.getBoardById)
-router.put('/boards/:boardId', authMiddleware, BoardController.updateBoard)
+router.put('/boards', authMiddleware, BoardController.updateBoard)
 router.delete('/boards/:boardId', authMiddleware, BoardController.deleteBoard)
 
 //column

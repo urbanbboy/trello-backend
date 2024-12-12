@@ -22,7 +22,7 @@ const UserSchema = new mongoose.Schema(
         },
         activationLink: {
             type: String,
-        }
+        },
     },
     { timestamps: true },
 )

@@ -61,8 +61,18 @@ class UserController {
     async activate(req, res, next) {
         try {
             const activationLink = req.params.link
-            await userService.activate(activationLink)
+            await UserService.activate(activationLink)
             return res.redirect(process.env.CLIENT_URL)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async updateUser(req, res, next) {
+        try {
+            const { id, username, email, image } = req.body
+            const updatedUser = await UserService.updateUser(id, username, email, image)
+            return res.json(updatedUser)
         } catch (error) {
             next(error)
         }
