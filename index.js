@@ -17,6 +17,15 @@ app.use(cors({
     credentials: true,
     origin: [process.env.CLIENT_URL, process.env.VERCEL_CLIENT_URL, process.env.CLIENT_BUILD_URL]
 }))
+
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Origin', process.env.VERCEL_CLIENT_URL);
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+})
+
 app.use('/api', router)
 app.use(errorMiddleware)
 
