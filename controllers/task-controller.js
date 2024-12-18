@@ -59,6 +59,17 @@ class TaskController {
             next(error)
         }
     }
+
+    // async assignUser(req, res, next) {
+    //     try {
+    //         const { taskId } = req.params
+    //         const { userId } = req.body
+
+    //         const assignUser 
+    //     } catch (error) {
+    //         next(error)
+    //     }
+    // }
 }
 
 export default new TaskController()

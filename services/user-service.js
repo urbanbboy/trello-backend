@@ -1,7 +1,7 @@
 import UserModel from '../models/user-model.js'
 import bcrypt from 'bcrypt'
 import {v4 as uuidv4} from 'uuid'
-// import MailService from '../services/mail-service.js'
+import MailService from '../services/mail-service.js'
 import TokenService from './token-service.js'
 import UserDto from '../dtos/user-dto.js'
 import ApiError from '../exceptions/api-error.js'
@@ -18,7 +18,7 @@ class UserService {
         const activationLink = uuidv4()
 
         const user = await UserModel.create({ email, username, password: hashedPassword, activationLink })
-        // await MailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activationLink}`)
+        await MailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activationLink}`)
         const userDto = new UserDto(user);
         const tokens = TokenService.generateTokens({...userDto});
         await TokenService.saveToken(userDto.id, tokens.refreshToken)
@@ -36,6 +36,7 @@ class UserService {
         }
 
         user.isActivated = true
+        user.activationLink = null
         await user.save()
     }
 
@@ -83,9 +84,7 @@ class UserService {
     }
 
     async updateUser(id, username, email, image) {
-        console.log(id)
         const user = await UserModel.findById(id)
-        console.log(user)
         if(!user) {
             throw ApiError.BadRequest("Пользователь не найден")
         }
@@ -98,7 +97,8 @@ class UserService {
             { new: true }
         )
 
-        return updatedUser;
+        const userDto = new UserDto(updatedUser)
+        return {...userDto};
     }
 }
 

@@ -12,17 +12,19 @@ const UserSchema = new mongoose.Schema(
             required: true,
             unique: true
         },
+        image: {
+            type: String,
+        },
         password: {
             type: String,
             required: true
         }, 
-        isActivated: {
-            type: Boolean,
-            default: false
-        },
         activationLink: {
             type: String,
         },
+        isActivated: {
+            type: Boolean,
+        }
     },
     { timestamps: true },
 )

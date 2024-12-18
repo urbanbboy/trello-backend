@@ -21,10 +21,10 @@ const TaskSchema = mongoose.Schema(
             type: Number,
             required: true
         },
-        assignees: [{
+        assignee: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'UserModel'
-        }],
+        },
     },
     { timestamps: true },
 )

@@ -1,8 +1,11 @@
 import nodemailer from 'nodemailer'
+import dotenv from 'dotenv'
+dotenv.config();
 
 class MailService {
     constructor() {
         this.transporter = nodemailer.createTransport({
+            service: 'gmail',
             host: process.env.SMTP_HOST,
             port: process.env.SMTP_PORT,
             secure: false,
@@ -12,7 +15,7 @@ class MailService {
             }
         }, function (error, info) {
             if (error) {
-                console.log(error)
+                console.log("Ошибка такая: ", error)
             } else {
                 console.log('email sent:' + info.response)
             }
@@ -21,7 +24,6 @@ class MailService {
 
     async sendActivationMail(to, link) {
         
-        console.log(this.transporter)
         await this.transporter.sendMail({
             from: process.env.SMTP_USER,
             to,

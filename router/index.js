@@ -26,6 +26,7 @@ router.get('/boards', authMiddleware, BoardController.getBoards)
 router.get('/board', authMiddleware, BoardController.getBoardById)
 router.put('/boards', authMiddleware, BoardController.updateBoard)
 router.delete('/boards/:boardId', authMiddleware, BoardController.deleteBoard)
+router.post('users/:boardId/invite', authMiddleware, BoardController.inviteUser)
 
 //column
 router.get('/boards/:boardId/columns', authMiddleware, ColumnController.getBoardColumns)
@@ -40,3 +41,4 @@ router.post('/tasks', authMiddleware, TaskController.createTask)
 router.delete('/tasks/:taskId', authMiddleware, TaskController.deleteTask)
 router.put('/tasks/updateorder', authMiddleware, TaskController.updateTaskOrder)
 router.put('/tasks/:id', authMiddleware, TaskController.updateTask)
+// router.patch('/tasks/:taskId/assign', authMiddleware, TaskController.assignUser)

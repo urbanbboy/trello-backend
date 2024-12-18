@@ -44,10 +44,22 @@ class BoardController {
 
     async updateBoard(req, res, next) {
         try {
-            const { name, boardId } = req.body
+            const { name, boardId, image } = req.body
             console.log(name, boardId)
-            const updatedBoard = await BoardService.updateBoard(boardId, name)
+            const updatedBoard = await BoardService.updateBoard(boardId, name, image)
             return res.json(updatedBoard)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async inviteUser(req, res, next) {
+        try {
+            const { boardId } = req.params
+            const { email } = req.body
+
+            const newMember = await BoardService.inviteUser(boardId, email)
+            return res.json(newMember)
         } catch (error) {
             next(error)
         }
