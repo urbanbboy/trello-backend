@@ -1,6 +1,11 @@
+import {v4 as uuidv4} from 'uuid'
 import ApiError from '../exceptions/api-error.js'
 import BoardModel from '../models/board-model.js'
 import ColumnModel from '../models/column-model.js'
+import UserModel from '../models/user-model.js'
+import MailService from './mail-service.js'
+import TokenService from './token-service.js'
+import UserDto from '../dtos/user-dto.js'
 
 
 class BoardService {
@@ -68,6 +73,26 @@ class BoardService {
         return board;
     }
 
+    async getBoardMembers(boardId) {
+        if (!boardId) {
+            throw ApiError.BadRequest("Отсутствует id доски");
+        }
+
+        const board = await BoardModel.findById(boardId).populate({
+            path: 'members',
+            select: 'email _id isActivated username', 
+        });
+    
+        if (!board) {
+            throw ApiError.BadRequest("Доска не найдена");
+        }
+ 
+        const membersDto = board.members.map((member) => new UserDto(member));
+    
+        return membersDto;
+    }
+    
+
     async deleteBoard(boardId) {
         const deletedBoard = await BoardModel.findByIdAndDelete(boardId)
 
@@ -78,13 +103,33 @@ class BoardService {
         await ColumnModel.deleteMany({ boardId })
     }
 
-    async updateBoard(boardId, name, image) {
+    async updateBoardName(boardId, name) {
         if (!boardId) {
-            throw ApiError.BadRequest("Доска не найдена")
+            throw ApiError.BadRequest.BadRequest("Доска не найдена")
         }
 
         if (!name || name.trim() === "") {
             throw ApiError.BadRequest("Название доски не может быть пустым");
+        }
+
+        const updatedBoard = await BoardModel.findByIdAndUpdate(
+            boardId,
+            {
+                name,
+            },
+            { new: true }
+        )
+
+        if (!updatedBoard) {
+            throw ApiError.BadRequest("Доска с таким ID не найдена");
+        }
+
+        return updatedBoard
+    }
+
+    async updateBoardImage(boardId, image) {
+        if (!boardId) {
+            throw ApiError.BadRequest("Доска не найдена")
         }
 
         const [
@@ -102,7 +147,6 @@ class BoardService {
         const updatedBoard = await BoardModel.findByIdAndUpdate(
             boardId,
             {
-                name ,
                 imageId,
                 imageThumbUrl,
                 imageFullUrl,
@@ -120,22 +164,29 @@ class BoardService {
     }
 
     async inviteUser(boardId, email) {
-        const board = await BoardModel.findById(email)
+        const board = await BoardModel.findById(boardId)
 
-        if(!board) {
+        if (!board) {
             throw ApiError.NotFoundRequest("Доска не найдена")
         }
 
-        if(!board.members.includes(userId) && board.owner !== userId) {
-            throw ApiError.ForbiddenRequest("Доступ запрещен")
+        let user = await UserModel.findOne({ email })
+
+        if (user) {
+            if (!board.members.includes(user._id)) {
+                board.members.push(user._id)
+                await board.save();
+            }
+
+            return { message: "Пользователь добавлен на доску." }
         }
 
-        if(!board.members.includes(userId)) {
-            board.members.push(userId)
-            await board.save()
-        }
 
-        return {message: "Пользователь приглашен", board}
+        const inviteToken = TokenService.generateInviteToken({ boardId, email })
+        await TokenService.saveInviteToken(email, boardId, inviteToken)
+        await MailService.sendInviteMail(email, `${process.env.CLIENT_URL}/register?token=${inviteToken}`)
+
+        return { message: "Приглашение отправлено на почту" }
     }
 }
 

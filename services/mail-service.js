@@ -23,17 +23,33 @@ class MailService {
     }
 
     async sendActivationMail(to, link) {
-        
+
         await this.transporter.sendMail({
             from: process.env.SMTP_USER,
             to,
-            subject: "Активация аккаунта" + process.env.API_RENDER_URL,
+            subject: "Активация аккаунта" + process.env.API_URL,
             text: "",
             html:
                 `
                     <div>
                         <h1>Для активации перейдите по ссылке</h1>
                         <a href="${link}">${link}</a>
+                    </div>
+                `
+        })
+    }
+
+    async sendInviteMail(to, inviteLink) {
+        await this.transporter.sendMail({
+            from: process.env.SMTP_USER,
+            to,
+            subject: "Приглашение на доску Trello Clone",
+            text: "Вас пригласили на доску. Зарегистрируйтесь по ссылке: ${inviteLink}",
+            html:
+                `
+                    <div>
+                        <h1>Перейдите по ссылке чтобы зарегистрироваться.</h1>
+                        <a href="${inviteLink}">${inviteLink}</a>
                     </div>
                 `
         })

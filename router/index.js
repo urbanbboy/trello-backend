@@ -15,6 +15,7 @@ router.post('/login',
     UserController.login
 );
 router.post('/register', UserController.register);
+router.post('/register/invite', UserController.inviteRegister)
 router.post('/logout', UserController.logout);
 router.get('/activate/:link', UserController.activate);
 router.post('/refresh', UserController.refresh);
@@ -24,9 +25,11 @@ router.put("/user", authMiddleware, UserController.updateUser)
 router.post('/boards', authMiddleware, BoardController.createBoard)
 router.get('/boards', authMiddleware, BoardController.getBoards)
 router.get('/board', authMiddleware, BoardController.getBoardById)
-router.put('/boards', authMiddleware, BoardController.updateBoard)
+router.get('/members', authMiddleware, BoardController.getBoardMembers)
+router.put('/boards/update/image', authMiddleware, BoardController.updateBoardImage)
+router.put('/boards/update/name', authMiddleware, BoardController.updateBoardName)
 router.delete('/boards/:boardId', authMiddleware, BoardController.deleteBoard)
-router.post('users/:boardId/invite', authMiddleware, BoardController.inviteUser)
+router.post('/boards/invite', authMiddleware, BoardController.inviteUser)
 
 //column
 router.get('/boards/:boardId/columns', authMiddleware, ColumnController.getBoardColumns)

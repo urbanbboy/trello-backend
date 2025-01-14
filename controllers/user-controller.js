@@ -19,6 +19,23 @@ class UserController {
         }
     }
 
+    async inviteRegister(req, res, next) {
+        try {
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                return next(ApiError.BadRequest("Ошибка при валидации", errors.array()))
+            }
+            const { token } = req.query
+            const { email, username, password } = req.body
+            const userData = await UserService.inviteRegister(email, username, password, token)
+            const { refreshToken, accessToken, user, boardId } = userData
+            res.cookie('refreshToken', refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
+            return res.json({accessToken, user, boardId})
+        } catch (error) {
+            next(error)
+        }
+    }
+
     async login(req, res, next) {
         try {
             const { email, password } = req.body
@@ -65,7 +82,7 @@ class UserController {
         try {
             const activationLink = req.params.link
             await UserService.activate(activationLink)
-            return res.redirect(process.env.VERCEL_CLIENT_URL)
+            return res.redirect(process.env.CLIENT_URL)
         } catch (error) {
             next(error)
         }

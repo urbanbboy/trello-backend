@@ -39,14 +39,14 @@ class TaskService {
         return columnTasks
     }
 
-    async updateTask(id, title, description) {
+    async updateTask(id, title, description, assignee) {
         if(!id) {
             throw ApiError.BadRequest("Произошла ошибка. Повторите попытку");
         }
 
         const updatedTask = await TaskModel.findByIdAndUpdate(
             id,
-            { title, description },
+            { title, description, assignee },
             { new: true }
         )
 

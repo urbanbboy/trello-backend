@@ -40,9 +40,9 @@ class TaskController {
     async updateTask(req, res, next) {
         try {
             const { id } = req.params
-            const { title, description } = req.body
+            const { title, description, assignee } = req.body
 
-            const updatedTask = await TaskService.updateTask(id, title, description)
+            const updatedTask = await TaskService.updateTask(id, title, description, assignee)
             return res.json(updatedTask)
         } catch (error) {
             next(error)

@@ -5,7 +5,8 @@ import MailService from '../services/mail-service.js'
 import TokenService from './token-service.js'
 import UserDto from '../dtos/user-dto.js'
 import ApiError from '../exceptions/api-error.js'
-
+import InviteTokenModel from '../models/invite-token-model.js'
+import BoardModel from '../models/board-model.js'
 class UserService {
     async register(email, username, password) {
         const candidateEmail = await UserModel.findOne({ email })
@@ -18,14 +19,56 @@ class UserService {
         const activationLink = uuidv4()
 
         const user = await UserModel.create({ email, username, password: hashedPassword, activationLink })
-        await MailService.sendActivationMail(email, `${process.env.API_RENDER_URL}/api/activate/${activationLink}`)
+        await MailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activationLink}`)
         const userDto = new UserDto(user);
         const tokens = TokenService.generateTokens({...userDto});
-        await TokenService.saveToken(userDto.id, tokens.refreshToken)
+        await TokenService.saveRefreshToken(userDto.id, tokens.refreshToken)
 
         return {
             ...tokens,
             user: userDto
+        }
+    }
+
+    async inviteRegister(email, username, password, token) {
+        const userData = await TokenService.validateInviteToken(token)
+        const tokenFromDb = await InviteTokenModel.findOne({ inviteToken: token })
+        
+        if(!userData || !tokenFromDb) {
+            throw ApiError.UnauthorizedError();
+        }
+
+        const candidateEmail = await UserModel.findOne({ email })
+        const candidateUsername = await UserModel.findOne({ username })
+        if(candidateEmail || candidateUsername) {
+            throw ApiError.BadRequest("Пользователь с таким именем или почтой уже существует")
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 3)
+
+        const user = await UserModel.create({ email, username, password: hashedPassword, isActivated: true })
+        const userDto = new UserDto(user);
+        const tokens = TokenService.generateTokens({...userDto});
+        await TokenService.saveRefreshToken(userDto.id, tokens.refreshToken)
+        
+        const board = await BoardModel.findById(userData.boardId)
+        if(board) {
+            board.members.push(user._id)
+            await board.save()
+        } else {
+            throw ApiError.BadRequest("Доска не найдена");
+        }
+        
+        await InviteTokenModel.findOneAndUpdate(
+            { inviteToken: token },
+            { used: true }
+        )
+
+
+        return {
+            ...tokens,
+            user: userDto,
+            boardId: userData.boardId
         }
     }
 
@@ -54,7 +97,7 @@ class UserService {
         const userDto = new UserDto(user)
         const tokens = TokenService.generateTokens({...userDto})
 
-        await TokenService.saveToken(userDto.id, tokens.refreshToken)
+        await TokenService.saveRefreshToken(userDto.id, tokens.refreshToken)
         return {...tokens, user: userDto}
     }
 
@@ -78,7 +121,7 @@ class UserService {
         const user = await UserModel.findById(userData.id)
         const userDto = new UserDto(user)
         const tokens = TokenService.generateTokens({...userDto})
-        await TokenService.saveToken(userDto.id, tokens.refreshToken)
+        await TokenService.saveRefreshToken(userDto.id, tokens.refreshToken)
     
         return {...tokens, user: userDto}
     }

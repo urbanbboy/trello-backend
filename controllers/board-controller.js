@@ -32,6 +32,16 @@ class BoardController {
         }
     }
 
+    async getBoardMembers(req, res, next) {
+        try {
+            const { boardId } = req.query
+            const boardMembers = await BoardService.getBoardMembers(boardId)
+            return res.json(boardMembers)
+        } catch (error) {
+            next(error)
+        }
+    }
+
     async deleteBoard(req, res, next) {
         try {
             const { boardId } = req.params
@@ -42,11 +52,20 @@ class BoardController {
         }
     }
 
-    async updateBoard(req, res, next) {
+    async updateBoardImage(req, res, next) {
         try {
-            const { name, boardId, image } = req.body
-            console.log(name, boardId)
-            const updatedBoard = await BoardService.updateBoard(boardId, name, image)
+            const { boardId, image } = req.body
+            const updatedBoard = await BoardService.updateBoardImage(boardId, image)
+            return res.json(updatedBoard)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async updateBoardName(req, res, next) {
+        try {
+            const { name, boardId } = req.body
+            const updatedBoard = await BoardService.updateBoardName(boardId, name)
             return res.json(updatedBoard)
         } catch (error) {
             next(error)
@@ -55,11 +74,9 @@ class BoardController {
 
     async inviteUser(req, res, next) {
         try {
-            const { boardId } = req.params
-            const { email } = req.body
-
-            const newMember = await BoardService.inviteUser(boardId, email)
-            return res.json(newMember)
+            const { email, boardId } = req.body
+            const resMessage = await BoardService.inviteUser(boardId, email)
+            return res.json(resMessage)
         } catch (error) {
             next(error)
         }
