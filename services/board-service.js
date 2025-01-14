@@ -184,7 +184,7 @@ class BoardService {
 
         const inviteToken = TokenService.generateInviteToken({ boardId, email })
         await TokenService.saveInviteToken(email, boardId, inviteToken)
-        await MailService.sendInviteMail(email, `${process.env.CLIENT_URL}/register?token=${inviteToken}`)
+        await MailService.sendInviteMail(email, `${process.env.VERCEL_CLIENT_URL}/register?token=${inviteToken}`)
 
         return { message: "Приглашение отправлено на почту" }
     }
