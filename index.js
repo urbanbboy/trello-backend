@@ -15,8 +15,8 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
     credentials: true,
-    origin: ['http://localhost:3000', 'http://localhost:3001']
-    // process.env.CLIENT_URL, process.env.VERCEL_CLIENT_URL, process.env.CLIENT_BUILD_URL
+    origin: [process.env.CLIENT_URL, process.env.VERCEL_CLIENT_URL, process.env.CLIENT_BUILD_URL],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }))
 
 app.use('/api', router)
