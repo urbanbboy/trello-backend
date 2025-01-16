@@ -29,7 +29,7 @@ class UserController {
             const { email, username, password } = req.body
             const userData = await UserService.inviteRegister(email, username, password, token)
             const { refreshToken, accessToken, user, boardId } = userData
-            res.cookie('refreshToken', refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
+            res.cookie('refreshToken', refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure: true, sameSite: 'None' })
             return res.json({accessToken, user, boardId})
         } catch (error) {
             next(error)

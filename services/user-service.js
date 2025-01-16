@@ -10,11 +10,11 @@ import BoardModel from '../models/board-model.js'
 class UserService {
     async register(email, username, password) {
         const candidateEmail = await UserModel.findOne({ email })
-        const candidateUsername = await UserModel.findOne({ username })
-        if(candidateEmail || candidateUsername) {
-            throw ApiError.BadRequest("Пользователь с таким именем или почтой уже существует")
+        if(candidateEmail) {
+            throw ApiError.BadRequest("Пользователь с такой почтой уже существует")
         }
 
+        //hash the password
         const hashedPassword = await bcrypt.hash(password, 3)
         const activationLink = uuidv4()
 
